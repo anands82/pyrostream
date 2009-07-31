@@ -2,7 +2,7 @@
 Fire Eagle XMPP Python module v0.1
 by Anand S <anands82@yahoo.com>
 
-Source repo at TBD 
+Source repo at http://github.com/anands82/pyrostream 
 
 Example usage:
 sample.py
