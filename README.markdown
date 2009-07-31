@@ -9,11 +9,11 @@ pyrostream is an open source python library which aids development of tools for 
 
 ## GETTING STARTED
 1. Get fireeagle access token and secret
-1.a. [Create a New fireeagle Application](http://fireeagle.yahoo.net/developer/create)
-1.b. Select “Auth for web-based services”
-1.c. Fill in the blanks and create it
-1.d. Take note of your General Purpose Token and Secret
-1.e. Obtain an Access Token and Secret by sending a user through the [OAuth Dance](http://fireeagle.yahoo.net/developer/documentation/web_auth)
+- [Create a New fireeagle Application](http://fireeagle.yahoo.net/developer/create)
+- Select “Auth for web-based services”
+- Fill in the blanks and create it
+- Take note of your General Purpose Token and Secret
+- Obtain an Access Token and Secret by sending a user through the [OAuth Dance](http://fireeagle.yahoo.net/developer/documentation/web_auth)
 2. Create a JID on your XMPP server (if you dont have one, go to http://www.ejabberd.im)
 
 ## CODE
