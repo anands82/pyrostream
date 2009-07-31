@@ -20,14 +20,14 @@ pyrostream is an open source python library which aids development of tools for 
 2. Initialize obj:
        pyrostream.FireEagleXmppClient
 3. Add fireeagle.com to your roster:
-      fe_client.add_fireeagle_to_roster()
+       fe_client.add_fireeagle_to_roster()
 4. Subscribe to location update stream for the access token:
-      fe_client.subscribe(token, token_secret)
+       fe_client.subscribe(token, token_secret)
 5. check subscriptions:
-      fe_client.subscriptions(token, token_secret)
+       fe_client.subscriptions(token, token_secret)
 6. listen to location update stream:
-      fe_client.register_callback(callback)
-      fe_client.run()
+       fe_client.register_callback(callback)
+       fe_client.run()
 
 ## EXAMPLE
 * check out sample.py
