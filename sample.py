@@ -8,7 +8,7 @@ def callback(conn, msg):
   print msg
 
 config = ConfigParser.ConfigParser()
-config.readfp(open('conf/fireeagle.cfg'))
+config.readfp(open('sample.cfg'))
 
 fe_client = pyrostream.FireEagleXmppClient( config.get('FireEagle','pubsub.server'),  # FireEagle pubsub server
                                             config.get('Jabber','jid'),               # JID (intermediate server)

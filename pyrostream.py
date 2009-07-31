@@ -96,7 +96,6 @@ class OAuthXmpp:
     key = '%s&' % escape(self.consumer_secret)
     key += escape(self.token_secret)
     raw = '&'.join(sig)
-    print raw
     return key, raw
 
 
