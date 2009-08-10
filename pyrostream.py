@@ -37,12 +37,32 @@ NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 """
 
+import fireeagle_api
 import sys,os,xmpppy,random,time
 import hmac,hashlib,binascii,urllib
+from xml.dom import minidom
 from pprint import pprint
 
 # the following are all possible event types
 EVENT_TYPES = ['FESTREAM_ALL', 'FESTREAM_LOCATION_UPDATE']
+
+USER_LOCATION = 'location', {
+    'best_guess'   : fireeagle_api.boolean,
+    'box'          : fireeagle_api.geo_str,
+    'point'        : fireeagle_api.geo_str,
+    'level'        : int,
+    'level_name'   : fireeagle_api.string,
+    'located_at'   : fireeagle_api.date,
+    'name'         : fireeagle_api.string,
+    'place_id'     : fireeagle_api.string,
+    'woeid'        : fireeagle_api.string,
+    'query'        : fireeagle_api.string,
+}
+
+USER = 'user', {
+    'token'   : fireeagle_api.string,
+    'location': USER_LOCATION,
+}
 
 # url escape
 def escape(s):
@@ -230,20 +250,37 @@ class FireEagleXmppClient:
 
   # TODO error check for FESTREAM_LOCATION_UPDATE 
   # possible types: FESTREAM_ALL, FESTREAM_LOCATION_UPDATE
-  def __get_event_types(self,msg):
+  def __get_event_types(self,type):
     ret_arr = ['FESTREAM_ALL']
-    ret_arr.append('FESTREAM_LOCATION_UPDATE')
+    if(str(type) == 'http://jabber.org/protocol/pubsub#event'):
+      ret_arr.append('FESTREAM_LOCATION_UPDATE')
     return ret_arr
 
 
   # callback for all xmpp messages from fireeagle
   # calls appropriate user set callbacks
   def __master_callback(self,conn,msg):
-    type_arr = self.__get_event_types(msg)
-    for typ in type_arr:
-      if self.callback_hash.has_key(typ):
-        self.callback_hash[typ](conn,msg)
+    response_dom = minidom.parseString (str(msg))
+    if response_dom.documentElement.tagName != 'message':
+      return
 
+    for event in response_dom.getElementsByTagName("event"):
+      type_arr = self.__get_event_types(event.attributes['xmlns'].value)
+
+      for type in type_arr:
+        if not self.callback_hash.has_key(type):
+          continue
+
+        if type == 'FESTREAM_LOCATION_UPDATE':
+          element, conversions = USER
+          resp = self.fireeagle.build_return(event, element, conversions)
+        if type == 'FESTREAM_ALL':
+          resp = event.toxml()
+        
+        self.callback_hash[type](conn,resp)
+
+    response_dom.unlink()
+ 
 
   # public functions
 
@@ -253,6 +290,7 @@ class FireEagleXmppClient:
   # incase you didnt do it during init()
   def set_consumer_key_and_secret(self, consumer_key, consumer_secret):
     self.oauth = OAuthXmpp(self.fireeagle_server, self.jid, consumer_key, consumer_secret)
+    self.fireeagle = fireeagle_api.FireEagle(self.oauth.consumer_key, self.oauth.consumer_secret)
 
   # ping fireeagle server  
   def ping(self):
